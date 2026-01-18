@@ -39,12 +39,43 @@ export class SentinelOne implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
+					{ name: 'Activity', value: 'activity' },
 					{ name: 'Agent', value: 'agent' },
 					{ name: 'Device Control', value: 'deviceControl' },
+					{ name: 'Exclusion', value: 'exclusion' },
+					{ name: 'Group', value: 'group' },
+					{ name: 'Hash', value: 'hash' },
+					{ name: 'Site', value: 'site' },
 					{ name: 'Tag', value: 'tag' },
 					{ name: 'Threat', value: 'threat' },
 				],
 				default: 'agent',
+			},
+
+			// ============================================
+			//              ACTIVITY OPERATIONS
+			// ============================================
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: { show: { resource: ['activity'] } },
+				options: [
+					{
+						name: 'Get Activities',
+						value: 'getActivities',
+						description: 'Get activities/audit log entries',
+						action: 'Get activities',
+					},
+					{
+						name: 'Get Activity Types',
+						value: 'getActivityTypes',
+						description: 'Get list of activity types for filtering',
+						action: 'Get activity types',
+					},
+				],
+				default: 'getActivities',
 			},
 
 			// ============================================
@@ -58,16 +89,46 @@ export class SentinelOne implements INodeType {
 				displayOptions: { show: { resource: ['agent'] } },
 				options: [
 					{
+						name: 'Abort Scan',
+						value: 'abortScan',
+						description: 'Abort a running scan on agents',
+						action: 'Abort scan',
+					},
+					{
 						name: 'Connect to Network',
 						value: 'connect',
 						description: 'Reconnect agents to the network after isolation',
 						action: 'Connect agents to network',
 					},
 					{
+						name: 'Decommission',
+						value: 'decommission',
+						description: 'Decommission agents (remove from console)',
+						action: 'Decommission agents',
+					},
+					{
+						name: 'Disable Agent',
+						value: 'disableAgent',
+						description: 'Disable protection on agents',
+						action: 'Disable agents',
+					},
+					{
 						name: 'Disconnect from Network',
 						value: 'disconnect',
 						description: 'Isolate (quarantine) agents from the network',
 						action: 'Disconnect agents from network',
+					},
+					{
+						name: 'Enable Agent',
+						value: 'enableAgent',
+						description: 'Enable protection on agents',
+						action: 'Enable agents',
+					},
+					{
+						name: 'Fetch Logs',
+						value: 'fetchLogs',
+						description: 'Request agents to upload logs',
+						action: 'Fetch agent logs',
 					},
 					{
 						name: 'Get Agents',
@@ -82,10 +143,22 @@ export class SentinelOne implements INodeType {
 						action: 'Get installed applications',
 					},
 					{
+						name: 'Get Passphrase',
+						value: 'getPassphrase',
+						description: 'Get the passphrase for specific agents',
+						action: 'Get agent passphrase',
+					},
+					{
 						name: 'Initiate Scan',
 						value: 'initiateScan',
 						description: 'Run a Full Disk Scan on Agents that match the filter',
 						action: 'Initiate full disk scan',
+					},
+					{
+						name: 'Move to Site',
+						value: 'moveToSite',
+						description: 'Move agents to a different site',
+						action: 'Move agents to site',
 					},
 					{
 						name: 'Restart Machine',
@@ -104,6 +177,12 @@ export class SentinelOne implements INodeType {
 						value: 'uninstall',
 						description: 'Uninstall Agents from endpoints',
 						action: 'Uninstall agents',
+					},
+					{
+						name: 'Update Software',
+						value: 'updateSoftware',
+						description: 'Initiate agent software update',
+						action: 'Update agent software',
 					},
 				],
 				default: 'getAgents',
@@ -180,6 +259,110 @@ export class SentinelOne implements INodeType {
 			},
 
 			// ============================================
+			//              EXCLUSION OPERATIONS
+			// ============================================
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: { show: { resource: ['exclusion'] } },
+				options: [
+					{
+						name: 'Create Exclusion',
+						value: 'createExclusion',
+						description: 'Create a new exclusion (whitelist) entry',
+						action: 'Create exclusion',
+					},
+					{
+						name: 'Delete Exclusions',
+						value: 'deleteExclusions',
+						description: 'Delete exclusion entries',
+						action: 'Delete exclusions',
+					},
+					{
+						name: 'Get Exclusions',
+						value: 'getExclusions',
+						description: 'Get exclusions that match the filter',
+						action: 'Get exclusions',
+					},
+					{
+						name: 'Update Exclusion',
+						value: 'updateExclusion',
+						description: 'Update an existing exclusion entry',
+						action: 'Update exclusion',
+					},
+				],
+				default: 'getExclusions',
+			},
+
+			// ============================================
+			//              GROUP OPERATIONS
+			// ============================================
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: { show: { resource: ['group'] } },
+				options: [
+					{
+						name: 'Get Groups',
+						value: 'getGroups',
+						description: 'Get groups that match the filter',
+						action: 'Get groups',
+					},
+					{
+						name: 'Move Agents',
+						value: 'moveAgents',
+						description: 'Move agents to a specific group',
+						action: 'Move agents to group',
+					},
+				],
+				default: 'getGroups',
+			},
+
+			// ============================================
+			//              HASH OPERATIONS
+			// ============================================
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: { show: { resource: ['hash'] } },
+				options: [
+					{
+						name: 'Get Verdict',
+						value: 'getVerdict',
+						description: 'Get the reputation/verdict for a hash',
+						action: 'Get hash verdict',
+					},
+				],
+				default: 'getVerdict',
+			},
+
+			// ============================================
+			//              SITE OPERATIONS
+			// ============================================
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: { show: { resource: ['site'] } },
+				options: [
+					{
+						name: 'Get Sites',
+						value: 'getSites',
+						description: 'Get sites that match the filter',
+						action: 'Get sites',
+					},
+				],
+				default: 'getSites',
+			},
+
+			// ============================================
 			//              TAG OPERATIONS
 			// ============================================
 			{
@@ -214,8 +397,8 @@ export class SentinelOne implements INodeType {
 				type: 'boolean',
 				displayOptions: {
 					show: {
-						resource: ['agent', 'threat', 'deviceControl', 'tag'],
-						operation: ['getAgents', 'getThreats', 'getDeviceRules', 'getDeviceEvents', 'getTags'],
+						resource: ['activity', 'agent', 'threat', 'deviceControl', 'exclusion', 'group', 'site', 'tag'],
+						operation: ['getActivities', 'getAgents', 'getThreats', 'getDeviceRules', 'getDeviceEvents', 'getExclusions', 'getGroups', 'getSites', 'getTags'],
 					},
 				},
 				default: false,
@@ -227,8 +410,8 @@ export class SentinelOne implements INodeType {
 				type: 'number',
 				displayOptions: {
 					show: {
-						resource: ['agent', 'threat', 'deviceControl', 'tag'],
-						operation: ['getAgents', 'getThreats', 'getDeviceRules', 'getDeviceEvents', 'getTags'],
+						resource: ['activity', 'agent', 'threat', 'deviceControl', 'exclusion', 'group', 'site', 'tag'],
+						operation: ['getActivities', 'getAgents', 'getThreats', 'getDeviceRules', 'getDeviceEvents', 'getExclusions', 'getGroups', 'getSites', 'getTags'],
 						returnAll: [false],
 					},
 				},
@@ -338,7 +521,7 @@ export class SentinelOne implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['agent'],
-						operation: ['initiateScan', 'connect', 'disconnect', 'restart', 'shutdown', 'uninstall'],
+						operation: ['abortScan', 'initiateScan', 'connect', 'disconnect', 'decommission', 'disableAgent', 'enableAgent', 'fetchLogs', 'moveToSite', 'restart', 'shutdown', 'uninstall', 'updateSoftware'],
 					},
 				},
 				options: [
@@ -355,7 +538,7 @@ export class SentinelOne implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['agent'],
-						operation: ['initiateScan', 'connect', 'disconnect', 'restart', 'shutdown', 'uninstall'],
+						operation: ['abortScan', 'initiateScan', 'connect', 'disconnect', 'decommission', 'disableAgent', 'enableAgent', 'fetchLogs', 'moveToSite', 'restart', 'shutdown', 'uninstall', 'updateSoftware'],
 						targetBy: ['ids'],
 					},
 				},
@@ -371,7 +554,7 @@ export class SentinelOne implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['agent'],
-						operation: ['initiateScan', 'connect', 'disconnect', 'restart', 'shutdown', 'uninstall'],
+						operation: ['abortScan', 'initiateScan', 'connect', 'disconnect', 'decommission', 'disableAgent', 'enableAgent', 'fetchLogs', 'moveToSite', 'restart', 'shutdown', 'uninstall', 'updateSoftware'],
 						targetBy: ['filter'],
 					},
 				},
@@ -812,6 +995,354 @@ export class SentinelOne implements INodeType {
 			},
 
 			// ============================================
+			//         ACTIVITY OPTIONS
+			// ============================================
+			{
+				displayName: 'Filters',
+				name: 'activityFilters',
+				type: 'collection',
+				placeholder: 'Add Filter',
+				default: {},
+				displayOptions: { show: { resource: ['activity'], operation: ['getActivities'] } },
+				options: [
+					{ displayName: 'Account IDs', name: 'accountIds', type: 'string', default: '', description: 'List of Account IDs (comma-separated)' },
+					{ displayName: 'Activity Types', name: 'activityTypes', type: 'string', default: '', description: 'Activity type IDs (comma-separated)' },
+					{ displayName: 'Agent IDs', name: 'agentIds', type: 'string', default: '', description: 'List of Agent IDs (comma-separated)' },
+					{ displayName: 'Created At Between', name: 'createdAt__between', type: 'string', default: '', description: 'Date range (format: from_timestamp-to_timestamp)' },
+					{ displayName: 'Group IDs', name: 'groupIds', type: 'string', default: '', description: 'List of Group IDs (comma-separated)' },
+					{ displayName: 'Include Hidden', name: 'includeHidden', type: 'boolean', default: false, description: 'Whether to include hidden activities' },
+					{ displayName: 'Site IDs', name: 'siteIds', type: 'string', default: '', description: 'List of Site IDs (comma-separated)' },
+					{ displayName: 'Threat IDs', name: 'threatIds', type: 'string', default: '', description: 'List of Threat IDs (comma-separated)' },
+					{ displayName: 'User Emails', name: 'userEmails', type: 'string', default: '', description: 'User emails (comma-separated)' },
+				],
+			},
+
+			// ============================================
+			//         EXCLUSION OPTIONS
+			// ============================================
+			{
+				displayName: 'Filters',
+				name: 'exclusionFilters',
+				type: 'collection',
+				placeholder: 'Add Filter',
+				default: {},
+				displayOptions: { show: { resource: ['exclusion'], operation: ['getExclusions'] } },
+				options: [
+					{ displayName: 'Account IDs', name: 'accountIds', type: 'string', default: '', description: 'List of Account IDs (comma-separated)' },
+					{ displayName: 'Group IDs', name: 'groupIds', type: 'string', default: '', description: 'List of Group IDs (comma-separated)' },
+					{ displayName: 'IDs', name: 'ids', type: 'string', default: '', description: 'Exclusion IDs (comma-separated)' },
+					{
+						displayName: 'OS Types', name: 'osTypes', type: 'multiOptions', default: [],
+						options: [
+							{ name: 'Linux', value: 'linux' }, { name: 'macOS', value: 'macos' },
+							{ name: 'Windows', value: 'windows' }, { name: 'Windows Legacy', value: 'windows_legacy' },
+						],
+					},
+					{ displayName: 'Query', name: 'query', type: 'string', default: '', description: 'Free-text search term' },
+					{ displayName: 'Site IDs', name: 'siteIds', type: 'string', default: '', description: 'List of Site IDs (comma-separated)' },
+					{
+						displayName: 'Types', name: 'types', type: 'multiOptions', default: [],
+						options: [
+							{ name: 'Path', value: 'path' },
+							{ name: 'Certificate', value: 'certificate' },
+							{ name: 'Browser', value: 'browser' },
+							{ name: 'File Type', value: 'file_type' },
+							{ name: 'White Hash', value: 'white_hash' },
+						],
+					},
+					{ displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Filter by exclusion value' },
+				],
+			},
+
+			// Create Exclusion Options
+			{
+				displayName: 'Exclusion Type',
+				name: 'exclusionType',
+				type: 'options',
+				required: true,
+				displayOptions: { show: { resource: ['exclusion'], operation: ['createExclusion'] } },
+				options: [
+					{ name: 'Path', value: 'path' },
+					{ name: 'Certificate', value: 'certificate' },
+					{ name: 'Browser', value: 'browser' },
+					{ name: 'File Type', value: 'file_type' },
+					{ name: 'White Hash', value: 'white_hash' },
+				],
+				default: 'path',
+				description: 'Type of exclusion to create',
+			},
+			{
+				displayName: 'OS Type',
+				name: 'exclusionOsType',
+				type: 'options',
+				required: true,
+				displayOptions: { show: { resource: ['exclusion'], operation: ['createExclusion'] } },
+				options: [
+					{ name: 'Linux', value: 'linux' },
+					{ name: 'macOS', value: 'macos' },
+					{ name: 'Windows', value: 'windows' },
+					{ name: 'Windows Legacy', value: 'windows_legacy' },
+				],
+				default: 'windows',
+				description: 'Operating system for the exclusion',
+			},
+			{
+				displayName: 'Value',
+				name: 'exclusionValue',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { resource: ['exclusion'], operation: ['createExclusion'] } },
+				default: '',
+				description: 'Value to exclude (path, hash, certificate signer, etc.)',
+			},
+			{
+				displayName: 'Scope',
+				name: 'exclusionScope',
+				type: 'options',
+				required: true,
+				displayOptions: { show: { resource: ['exclusion'], operation: ['createExclusion'] } },
+				options: [
+					{ name: 'Global (Tenant)', value: 'tenant' },
+					{ name: 'Account', value: 'account' },
+					{ name: 'Site', value: 'site' },
+					{ name: 'Group', value: 'group' },
+				],
+				default: 'site',
+				description: 'Scope level for the exclusion',
+			},
+			{
+				displayName: 'Account IDs',
+				name: 'exclusionAccountIds',
+				type: 'string',
+				displayOptions: { show: { resource: ['exclusion'], operation: ['createExclusion'], exclusionScope: ['account'] } },
+				default: '',
+				description: 'Account IDs (comma-separated)',
+			},
+			{
+				displayName: 'Site IDs',
+				name: 'exclusionSiteIds',
+				type: 'string',
+				displayOptions: { show: { resource: ['exclusion'], operation: ['createExclusion'], exclusionScope: ['site'] } },
+				default: '',
+				description: 'Site IDs (comma-separated)',
+			},
+			{
+				displayName: 'Group IDs',
+				name: 'exclusionGroupIds',
+				type: 'string',
+				displayOptions: { show: { resource: ['exclusion'], operation: ['createExclusion'], exclusionScope: ['group'] } },
+				default: '',
+				description: 'Group IDs (comma-separated)',
+			},
+			{
+				displayName: 'Description',
+				name: 'exclusionDescription',
+				type: 'string',
+				displayOptions: { show: { resource: ['exclusion'], operation: ['createExclusion'] } },
+				default: '',
+				description: 'Description of the exclusion',
+			},
+			{
+				displayName: 'Mode',
+				name: 'exclusionMode',
+				type: 'options',
+				displayOptions: { show: { resource: ['exclusion'], operation: ['createExclusion'], exclusionType: ['path'] } },
+				options: [
+					{ name: 'Suppress', value: 'suppress' },
+					{ name: 'Suppress Dynamic Only', value: 'suppress_dynamic_only' },
+					{ name: 'Suppress DFI Only', value: 'suppress_dfi_only' },
+					{ name: 'Disable In-Process Monitor', value: 'disable_in_process_monitor' },
+					{ name: 'Disable All Monitors', value: 'disable_all_monitors' },
+				],
+				default: 'suppress',
+				description: 'Exclusion mode (path exclusions only)',
+			},
+
+			// Update Exclusion Options
+			{
+				displayName: 'Exclusion ID',
+				name: 'updateExclusionId',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { resource: ['exclusion'], operation: ['updateExclusion'] } },
+				default: '',
+				description: 'ID of the exclusion to update',
+			},
+			{
+				displayName: 'Update Fields',
+				name: 'exclusionUpdateFields',
+				type: 'collection',
+				placeholder: 'Add Field',
+				default: {},
+				displayOptions: { show: { resource: ['exclusion'], operation: ['updateExclusion'] } },
+				options: [
+					{ displayName: 'Description', name: 'description', type: 'string', default: '', description: 'New description' },
+					{ displayName: 'Value', name: 'value', type: 'string', default: '', description: 'New value' },
+					{
+						displayName: 'Mode', name: 'mode', type: 'options', default: 'suppress',
+						options: [
+							{ name: 'Suppress', value: 'suppress' },
+							{ name: 'Suppress Dynamic Only', value: 'suppress_dynamic_only' },
+							{ name: 'Disable All Monitors', value: 'disable_all_monitors' },
+						],
+					},
+				],
+			},
+
+			// Delete Exclusions Options
+			{
+				displayName: 'Exclusion IDs',
+				name: 'deleteExclusionIds',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { resource: ['exclusion'], operation: ['deleteExclusions'] } },
+				default: '',
+				description: 'IDs of exclusions to delete (comma-separated)',
+			},
+
+			// ============================================
+			//         GROUP OPTIONS
+			// ============================================
+			{
+				displayName: 'Filters',
+				name: 'groupFilters',
+				type: 'collection',
+				placeholder: 'Add Filter',
+				default: {},
+				displayOptions: { show: { resource: ['group'], operation: ['getGroups'] } },
+				options: [
+					{ displayName: 'Account IDs', name: 'accountIds', type: 'string', default: '', description: 'List of Account IDs (comma-separated)' },
+					{ displayName: 'Group IDs', name: 'groupIds', type: 'string', default: '', description: 'Filter by specific Group IDs (comma-separated)' },
+					{ displayName: 'Is Default', name: 'isDefault', type: 'boolean', default: false, description: 'Whether to filter by default groups' },
+					{ displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Filter by group name' },
+					{ displayName: 'Query', name: 'query', type: 'string', default: '', description: 'Free-text search term' },
+					{ displayName: 'Site IDs', name: 'siteIds', type: 'string', default: '', description: 'List of Site IDs (comma-separated)' },
+				],
+			},
+
+			// Move Agents to Group Options
+			{
+				displayName: 'Target Group ID',
+				name: 'moveToGroupId',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { resource: ['group'], operation: ['moveAgents'] } },
+				default: '',
+				description: 'ID of the group to move agents to',
+			},
+			{
+				displayName: 'Target By',
+				name: 'moveAgentsTargetBy',
+				type: 'options',
+				displayOptions: { show: { resource: ['group'], operation: ['moveAgents'] } },
+				options: [
+					{ name: 'Agent IDs', value: 'ids', description: 'Target specific agents by their IDs' },
+					{ name: 'Filter', value: 'filter', description: 'Target agents matching filter criteria' },
+				],
+				default: 'ids',
+			},
+			{
+				displayName: 'Agent IDs',
+				name: 'moveAgentIds',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { resource: ['group'], operation: ['moveAgents'], moveAgentsTargetBy: ['ids'] } },
+				default: '',
+				description: 'Agent IDs to move (comma-separated)',
+			},
+			{
+				displayName: 'Agent Filters',
+				name: 'moveAgentFilters',
+				type: 'collection',
+				placeholder: 'Add Filter',
+				default: {},
+				displayOptions: { show: { resource: ['group'], operation: ['moveAgents'], moveAgentsTargetBy: ['filter'] } },
+				options: [
+					{ displayName: 'Account IDs', name: 'accountIds', type: 'string', default: '', description: 'List of Account IDs (comma-separated)' },
+					{ displayName: 'Computer Name Contains', name: 'computerName__contains', type: 'string', default: '', description: 'Free-text filter by computer name' },
+					{ displayName: 'Group IDs', name: 'groupIds', type: 'string', default: '', description: 'List of Group IDs (comma-separated)' },
+					{ displayName: 'Site IDs', name: 'siteIds', type: 'string', default: '', description: 'List of Site IDs (comma-separated)' },
+				],
+			},
+
+			// ============================================
+			//         HASH OPTIONS
+			// ============================================
+			{
+				displayName: 'Hash',
+				name: 'hashValue',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { resource: ['hash'], operation: ['getVerdict'] } },
+				default: '',
+				description: 'SHA1 hash to check (40 characters)',
+			},
+
+			// ============================================
+			//         SITE OPTIONS
+			// ============================================
+			{
+				displayName: 'Filters',
+				name: 'siteFilters',
+				type: 'collection',
+				placeholder: 'Add Filter',
+				default: {},
+				displayOptions: { show: { resource: ['site'], operation: ['getSites'] } },
+				options: [
+					{ displayName: 'Account IDs', name: 'accountIds', type: 'string', default: '', description: 'List of Account IDs (comma-separated)' },
+					{ displayName: 'Admin Only', name: 'adminOnly', type: 'boolean', default: false, description: 'Whether to show only sites the user can manage' },
+					{ displayName: 'Available Modules', name: 'availableMovesToSites', type: 'boolean', default: false, description: 'Whether to show only sites available for moving agents' },
+					{ displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Filter by site name' },
+					{ displayName: 'Query', name: 'query', type: 'string', default: '', description: 'Free-text search term' },
+					{ displayName: 'Site IDs', name: 'siteIds', type: 'string', default: '', description: 'Filter by specific Site IDs (comma-separated)' },
+					{
+						displayName: 'Site Type', name: 'siteType', type: 'options', default: 'Paid',
+						options: [
+							{ name: 'Paid', value: 'Paid' },
+							{ name: 'Trial', value: 'Trial' },
+						],
+					},
+					{
+						displayName: 'States', name: 'states', type: 'multiOptions', default: [],
+						options: [
+							{ name: 'Active', value: 'active' },
+							{ name: 'Deleted', value: 'deleted' },
+							{ name: 'Expired', value: 'expired' },
+						],
+					},
+				],
+			},
+
+			// ============================================
+			//         ADDITIONAL AGENT ACTION OPTIONS
+			// ============================================
+
+			// Move to Site Options
+			{
+				displayName: 'Target Site ID',
+				name: 'moveToSiteId',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { resource: ['agent'], operation: ['moveToSite'] } },
+				default: '',
+				description: 'ID of the site to move agents to',
+			},
+
+			// Update Software Options
+			{
+				displayName: 'Package Type',
+				name: 'updatePackageType',
+				type: 'options',
+				displayOptions: { show: { resource: ['agent'], operation: ['updateSoftware'] } },
+				options: [
+					{ name: 'Agent', value: 'Agent' },
+					{ name: 'Ranger', value: 'Ranger' },
+				],
+				default: 'Agent',
+				description: 'Type of software package to update',
+			},
+
+			// ============================================
 			//         TAG OPTIONS
 			// ============================================
 			{
@@ -962,7 +1493,18 @@ export class SentinelOne implements INodeType {
 						responseData.data?.forEach(app => returnData.push({ json: app }));
 					}
 
-					if (['initiateScan', 'connect', 'disconnect', 'restart', 'shutdown', 'uninstall'].includes(operation)) {
+					if (operation === 'getPassphrase') {
+						const agentIds = this.getNodeParameter('agentIds', i) as string;
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'GET' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/agents/passphrases`,
+							qs: { ids: agentIds },
+							json: true,
+						}) as { data: IDataObject[] };
+						responseData.data?.forEach(passphrase => returnData.push({ json: passphrase }));
+					}
+
+					if (['abortScan', 'initiateScan', 'connect', 'disconnect', 'decommission', 'disableAgent', 'enableAgent', 'fetchLogs', 'restart', 'shutdown', 'uninstall'].includes(operation)) {
 						const targetBy = this.getNodeParameter('targetBy', i) as string;
 						const filter: IDataObject = {};
 
@@ -979,9 +1521,14 @@ export class SentinelOne implements INodeType {
 						}
 
 						const actionEndpoints: Record<string, string> = {
+							abortScan: '/web/api/v2.1/agents/actions/abort-scan',
 							initiateScan: '/web/api/v2.1/agents/actions/initiate-scan',
 							connect: '/web/api/v2.1/agents/actions/connect',
 							disconnect: '/web/api/v2.1/agents/actions/disconnect',
+							decommission: '/web/api/v2.1/agents/actions/decommission',
+							disableAgent: '/web/api/v2.1/agents/actions/disable-agent',
+							enableAgent: '/web/api/v2.1/agents/actions/enable-agent',
+							fetchLogs: '/web/api/v2.1/agents/actions/fetch-logs',
 							restart: '/web/api/v2.1/agents/actions/restart-machine',
 							shutdown: '/web/api/v2.1/agents/actions/shutdown',
 							uninstall: '/web/api/v2.1/agents/actions/uninstall',
@@ -991,6 +1538,58 @@ export class SentinelOne implements INodeType {
 							method: 'POST' as IHttpRequestMethods,
 							url: `${baseUrl}${actionEndpoints[operation]}`,
 							body: { filter },
+							json: true,
+						}) as { data: IDataObject };
+						returnData.push({ json: responseData.data || responseData });
+					}
+
+					if (operation === 'moveToSite') {
+						const targetBy = this.getNodeParameter('targetBy', i) as string;
+						const targetSiteId = this.getNodeParameter('moveToSiteId', i) as string;
+						const filter: IDataObject = {};
+
+						if (targetBy === 'ids') {
+							const agentIds = this.getNodeParameter('actionAgentIds', i) as string;
+							filter.ids = agentIds.split(',').map(id => id.trim());
+						} else {
+							const actionFilters = this.getNodeParameter('actionFilters', i) as IDataObject;
+							Object.entries(actionFilters).forEach(([key, value]) => {
+								if (value !== undefined && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+									filter[key] = typeof value === 'string' && key !== 'query' ? value.split(',').map(s => s.trim()) : value;
+								}
+							});
+						}
+
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'POST' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/agents/actions/move-to-site`,
+							body: { filter, data: { targetSiteId } },
+							json: true,
+						}) as { data: IDataObject };
+						returnData.push({ json: responseData.data || responseData });
+					}
+
+					if (operation === 'updateSoftware') {
+						const targetBy = this.getNodeParameter('targetBy', i) as string;
+						const packageType = this.getNodeParameter('updatePackageType', i, 'Agent') as string;
+						const filter: IDataObject = {};
+
+						if (targetBy === 'ids') {
+							const agentIds = this.getNodeParameter('actionAgentIds', i) as string;
+							filter.ids = agentIds.split(',').map(id => id.trim());
+						} else {
+							const actionFilters = this.getNodeParameter('actionFilters', i) as IDataObject;
+							Object.entries(actionFilters).forEach(([key, value]) => {
+								if (value !== undefined && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+									filter[key] = typeof value === 'string' && key !== 'query' ? value.split(',').map(s => s.trim()) : value;
+								}
+							});
+						}
+
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'POST' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/agents/actions/update-software`,
+							body: { filter, data: { packageType } },
 							json: true,
 						}) as { data: IDataObject };
 						returnData.push({ json: responseData.data || responseData });
@@ -1315,6 +1914,309 @@ export class SentinelOne implements INodeType {
 							json: true,
 						}) as { data: IDataObject };
 						returnData.push({ json: responseData.data || responseData });
+					}
+				}
+
+				// ============================================
+				//              ACTIVITY RESOURCE
+				// ============================================
+				if (resource === 'activity') {
+					if (operation === 'getActivities') {
+						const returnAll = this.getNodeParameter('returnAll', i) as boolean;
+						const filters = this.getNodeParameter('activityFilters', i) as IDataObject;
+						const qs: IDataObject = {};
+
+						Object.entries(filters).forEach(([key, value]) => {
+							if (value !== undefined && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+								qs[key] = Array.isArray(value) ? (value as string[]).join(',') : value;
+							}
+						});
+
+						const allData: IDataObject[] = [];
+						let responseData: { data: IDataObject[]; pagination?: { nextCursor?: string } };
+
+						if (returnAll) {
+							qs.limit = 1000;
+							do {
+								responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+									method: 'GET' as IHttpRequestMethods,
+									url: `${baseUrl}/web/api/v2.1/activities`,
+									qs,
+									json: true,
+								});
+								if (responseData.data) allData.push(...responseData.data);
+								if (responseData.pagination?.nextCursor) qs.cursor = responseData.pagination.nextCursor;
+							} while (responseData.pagination?.nextCursor);
+							allData.forEach(activity => returnData.push({ json: activity }));
+						} else {
+							qs.limit = this.getNodeParameter('limit', i) as number;
+							responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+								method: 'GET' as IHttpRequestMethods,
+								url: `${baseUrl}/web/api/v2.1/activities`,
+								qs,
+								json: true,
+							});
+							responseData.data?.forEach(activity => returnData.push({ json: activity }));
+						}
+					}
+
+					if (operation === 'getActivityTypes') {
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'GET' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/activities/types`,
+							json: true,
+						}) as { data: IDataObject[] };
+						responseData.data?.forEach(type => returnData.push({ json: type }));
+					}
+				}
+
+				// ============================================
+				//              EXCLUSION RESOURCE
+				// ============================================
+				if (resource === 'exclusion') {
+					if (operation === 'getExclusions') {
+						const returnAll = this.getNodeParameter('returnAll', i) as boolean;
+						const filters = this.getNodeParameter('exclusionFilters', i) as IDataObject;
+						const qs: IDataObject = {};
+
+						Object.entries(filters).forEach(([key, value]) => {
+							if (value !== undefined && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+								qs[key] = Array.isArray(value) ? (value as string[]).join(',') : value;
+							}
+						});
+
+						const allData: IDataObject[] = [];
+						let responseData: { data: IDataObject[]; pagination?: { nextCursor?: string } };
+
+						if (returnAll) {
+							qs.limit = 1000;
+							do {
+								responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+									method: 'GET' as IHttpRequestMethods,
+									url: `${baseUrl}/web/api/v2.1/exclusions`,
+									qs,
+									json: true,
+								});
+								if (responseData.data) allData.push(...responseData.data);
+								if (responseData.pagination?.nextCursor) qs.cursor = responseData.pagination.nextCursor;
+							} while (responseData.pagination?.nextCursor);
+							allData.forEach(exclusion => returnData.push({ json: exclusion }));
+						} else {
+							qs.limit = this.getNodeParameter('limit', i) as number;
+							responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+								method: 'GET' as IHttpRequestMethods,
+								url: `${baseUrl}/web/api/v2.1/exclusions`,
+								qs,
+								json: true,
+							});
+							responseData.data?.forEach(exclusion => returnData.push({ json: exclusion }));
+						}
+					}
+
+					if (operation === 'createExclusion') {
+						const exclusionType = this.getNodeParameter('exclusionType', i) as string;
+						const osType = this.getNodeParameter('exclusionOsType', i) as string;
+						const value = this.getNodeParameter('exclusionValue', i) as string;
+						const scope = this.getNodeParameter('exclusionScope', i) as string;
+						const description = this.getNodeParameter('exclusionDescription', i, '') as string;
+
+						const data: IDataObject = {
+							type: exclusionType,
+							osType,
+							value,
+						};
+
+						if (description) data.description = description;
+
+						if (exclusionType === 'path') {
+							const mode = this.getNodeParameter('exclusionMode', i, 'suppress') as string;
+							data.mode = mode;
+						}
+
+						const filter: IDataObject = {};
+						if (scope === 'tenant') {
+							filter.tenant = true;
+						} else if (scope === 'account') {
+							const accountIds = this.getNodeParameter('exclusionAccountIds', i, '') as string;
+							if (accountIds) filter.accountIds = accountIds.split(',').map(id => id.trim());
+						} else if (scope === 'site') {
+							const siteIds = this.getNodeParameter('exclusionSiteIds', i, '') as string;
+							if (siteIds) filter.siteIds = siteIds.split(',').map(id => id.trim());
+						} else if (scope === 'group') {
+							const groupIds = this.getNodeParameter('exclusionGroupIds', i, '') as string;
+							if (groupIds) filter.groupIds = groupIds.split(',').map(id => id.trim());
+						}
+
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'POST' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/exclusions`,
+							body: { data, filter },
+							json: true,
+						}) as { data: IDataObject };
+						returnData.push({ json: responseData.data || responseData });
+					}
+
+					if (operation === 'updateExclusion') {
+						const exclusionId = this.getNodeParameter('updateExclusionId', i) as string;
+						const updateFields = this.getNodeParameter('exclusionUpdateFields', i) as IDataObject;
+
+						const data: IDataObject = {};
+						Object.entries(updateFields).forEach(([key, value]) => {
+							if (value !== undefined && value !== '') {
+								data[key] = value;
+							}
+						});
+
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'PUT' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/exclusions`,
+							body: { data, filter: { ids: [exclusionId] } },
+							json: true,
+						}) as { data: IDataObject };
+						returnData.push({ json: responseData.data || responseData });
+					}
+
+					if (operation === 'deleteExclusions') {
+						const exclusionIds = this.getNodeParameter('deleteExclusionIds', i) as string;
+						const ids = exclusionIds.split(',').map(id => id.trim());
+
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'DELETE' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/exclusions`,
+							body: { filter: { ids } },
+							json: true,
+						}) as { data: IDataObject };
+						returnData.push({ json: responseData.data || responseData });
+					}
+				}
+
+				// ============================================
+				//              GROUP RESOURCE
+				// ============================================
+				if (resource === 'group') {
+					if (operation === 'getGroups') {
+						const returnAll = this.getNodeParameter('returnAll', i) as boolean;
+						const filters = this.getNodeParameter('groupFilters', i) as IDataObject;
+						const qs: IDataObject = {};
+
+						Object.entries(filters).forEach(([key, value]) => {
+							if (value !== undefined && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+								qs[key] = Array.isArray(value) ? (value as string[]).join(',') : value;
+							}
+						});
+
+						const allData: IDataObject[] = [];
+						let responseData: { data: IDataObject[]; pagination?: { nextCursor?: string } };
+
+						if (returnAll) {
+							qs.limit = 1000;
+							do {
+								responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+									method: 'GET' as IHttpRequestMethods,
+									url: `${baseUrl}/web/api/v2.1/groups`,
+									qs,
+									json: true,
+								});
+								if (responseData.data) allData.push(...responseData.data);
+								if (responseData.pagination?.nextCursor) qs.cursor = responseData.pagination.nextCursor;
+							} while (responseData.pagination?.nextCursor);
+							allData.forEach(group => returnData.push({ json: group }));
+						} else {
+							qs.limit = this.getNodeParameter('limit', i) as number;
+							responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+								method: 'GET' as IHttpRequestMethods,
+								url: `${baseUrl}/web/api/v2.1/groups`,
+								qs,
+								json: true,
+							});
+							responseData.data?.forEach(group => returnData.push({ json: group }));
+						}
+					}
+
+					if (operation === 'moveAgents') {
+						const groupId = this.getNodeParameter('moveToGroupId', i) as string;
+						const targetBy = this.getNodeParameter('moveAgentsTargetBy', i) as string;
+						const filter: IDataObject = {};
+
+						if (targetBy === 'ids') {
+							const agentIds = this.getNodeParameter('moveAgentIds', i) as string;
+							filter.ids = agentIds.split(',').map(id => id.trim());
+						} else {
+							const moveFilters = this.getNodeParameter('moveAgentFilters', i) as IDataObject;
+							Object.entries(moveFilters).forEach(([key, value]) => {
+								if (value !== undefined && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+									filter[key] = typeof value === 'string' && key !== 'query' ? value.split(',').map(s => s.trim()) : value;
+								}
+							});
+						}
+
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'PUT' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/groups/${groupId}/move-agents`,
+							body: { filter },
+							json: true,
+						}) as { data: IDataObject };
+						returnData.push({ json: responseData.data || responseData });
+					}
+				}
+
+				// ============================================
+				//              HASH RESOURCE
+				// ============================================
+				if (resource === 'hash') {
+					if (operation === 'getVerdict') {
+						const hash = this.getNodeParameter('hashValue', i) as string;
+
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'GET' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/hashes/${hash}/verdict`,
+							json: true,
+						}) as { data: IDataObject };
+						returnData.push({ json: responseData.data || responseData });
+					}
+				}
+
+				// ============================================
+				//              SITE RESOURCE
+				// ============================================
+				if (resource === 'site') {
+					if (operation === 'getSites') {
+						const returnAll = this.getNodeParameter('returnAll', i) as boolean;
+						const filters = this.getNodeParameter('siteFilters', i) as IDataObject;
+						const qs: IDataObject = {};
+
+						Object.entries(filters).forEach(([key, value]) => {
+							if (value !== undefined && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+								qs[key] = Array.isArray(value) ? (value as string[]).join(',') : value;
+							}
+						});
+
+						const allData: IDataObject[] = [];
+						let responseData: { data: { sites: IDataObject[] }; pagination?: { nextCursor?: string } };
+
+						if (returnAll) {
+							qs.limit = 1000;
+							do {
+								responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+									method: 'GET' as IHttpRequestMethods,
+									url: `${baseUrl}/web/api/v2.1/sites`,
+									qs,
+									json: true,
+								});
+								if (responseData.data?.sites) allData.push(...responseData.data.sites);
+								if (responseData.pagination?.nextCursor) qs.cursor = responseData.pagination.nextCursor;
+							} while (responseData.pagination?.nextCursor);
+							allData.forEach(site => returnData.push({ json: site }));
+						} else {
+							qs.limit = this.getNodeParameter('limit', i) as number;
+							responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+								method: 'GET' as IHttpRequestMethods,
+								url: `${baseUrl}/web/api/v2.1/sites`,
+								qs,
+								json: true,
+							});
+							responseData.data?.sites?.forEach(site => returnData.push({ json: site }));
+						}
 					}
 				}
 

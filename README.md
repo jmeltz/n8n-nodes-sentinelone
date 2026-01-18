@@ -9,23 +9,31 @@ An n8n community node for interacting with the **SentinelOne API v2.1**. Manage 
 
 ## Features
 
+### Activity Operations (Audit Log)
+| Operation | Description |
+|-----------|-------------|
+| **Get Activities** | Retrieve activity/audit log entries with filtering |
+| **Get Activity Types** | Get list of activity types for filtering |
+
 ### Agent Operations
 | Operation | Description |
 |-----------|-------------|
+| **Abort Scan** | Abort a running scan on agents |
+| **Connect to Network** | Reconnect isolated agents to the network |
+| **Decommission** | Decommission agents (remove from console) |
+| **Disable Agent** | Disable protection on agents |
+| **Disconnect from Network** | Quarantine/isolate agents from the network |
+| **Enable Agent** | Enable protection on agents |
+| **Fetch Logs** | Request agents to upload diagnostic logs |
 | **Get Agents** | Retrieve agents with comprehensive filtering options |
 | **Get Applications** | Get installed applications for specific agents |
+| **Get Passphrase** | Get the passphrase for specific agents |
 | **Initiate Scan** | Run full disk scans on targeted agents |
-| **Connect to Network** | Reconnect isolated agents to the network |
-| **Disconnect from Network** | Quarantine/isolate agents from the network |
+| **Move to Site** | Move agents to a different site |
 | **Restart Machine** | Remotely restart endpoints |
 | **Shutdown** | Remotely shut down endpoints |
 | **Uninstall Agent** | Remove SentinelOne agents from endpoints |
-
-### Threat Operations
-| Operation | Description |
-|-----------|-------------|
-| **Get Threats** | Retrieve threats with filtering by status, verdict, OS type, etc. |
-| **Mitigate Threat** | Apply mitigation actions (kill, quarantine, remediate, rollback, un-quarantine, network-quarantine) |
+| **Update Software** | Initiate agent software update |
 
 ### Device Control Operations
 | Operation | Description |
@@ -36,11 +44,41 @@ An n8n community node for interacting with the **SentinelOne API v2.1**. Manage 
 | **Get Device Rules** | Retrieve device control rules with filtering by interface, device class, action, etc. |
 | **Update Rule** | Update existing device control rules |
 
+### Exclusion Operations
+| Operation | Description |
+|-----------|-------------|
+| **Create Exclusion** | Create whitelist/exclusion entries (path, hash, certificate, etc.) |
+| **Delete Exclusions** | Delete exclusion entries by ID |
+| **Get Exclusions** | Retrieve exclusions with filtering |
+| **Update Exclusion** | Update existing exclusion entries |
+
+### Group Operations
+| Operation | Description |
+|-----------|-------------|
+| **Get Groups** | Retrieve groups with filtering |
+| **Move Agents** | Move agents to a specific group |
+
+### Hash Operations
+| Operation | Description |
+|-----------|-------------|
+| **Get Verdict** | Get the reputation/verdict for a SHA1 hash |
+
+### Site Operations
+| Operation | Description |
+|-----------|-------------|
+| **Get Sites** | Retrieve sites with filtering |
+
 ### Tag Operations
 | Operation | Description |
 |-----------|-------------|
 | **Get Tags** | Retrieve endpoint tags |
 | **Manage Tags** | Add, remove, or override tags on agents |
+
+### Threat Operations
+| Operation | Description |
+|-----------|-------------|
+| **Get Threats** | Retrieve threats with filtering by status, verdict, OS type, etc. |
+| **Mitigate Threat** | Apply mitigation actions (kill, quarantine, remediate, rollback, un-quarantine, network-quarantine) |
 
 ## Installation
 
@@ -251,6 +289,18 @@ https://your-console.sentinelone.net/api-doc/overview
 - **SentinelOne Docs:** [Developer Portal](https://developer.sentinelone.com/)
 
 ## Changelog
+
+### v0.4.0
+- Added new resources:
+  - **Activity**: Get audit log entries and activity types
+  - **Exclusion**: Full CRUD for whitelist/exclusion management
+  - **Group**: Get groups and move agents between groups
+  - **Hash**: Get reputation verdict for SHA1 hashes
+  - **Site**: Get sites with filtering
+- Expanded Agent operations:
+  - Abort Scan, Decommission, Disable Agent, Enable Agent
+  - Fetch Logs, Get Passphrase, Move to Site, Update Software
+- Now supports 9 resources with 30+ operations
 
 ### v0.3.0
 - Expanded Device Control operations:
