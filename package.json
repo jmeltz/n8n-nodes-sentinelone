@@ -1,22 +1,25 @@
 {
 	"name": "n8n-nodes-sentinelone",
-	"version": "0.1.0",
-	"description": "n8n node for SentinelOne API",
+	"version": "0.2.0",
+	"description": "n8n node for SentinelOne API - Manage agents, threats, device control, and tags",
 	"keywords": [
 		"n8n-community-node-package",
 		"sentinelone",
 		"security",
 		"endpoint",
-		"edr"
+		"edr",
+		"threat",
+		"device-control",
+		"xdr"
 	],
 	"license": "MIT",
-	"homepage": "",
+	"homepage": "https://github.com/jmeltz/n8n-nodes-sentinelone",
 	"author": {
-		"name": ""
+		"name": "jmeltz"
 	},
 	"repository": {
 		"type": "git",
-		"url": ""
+		"url": "https://github.com/jmeltz/n8n-nodes-sentinelone.git"
 	},
 	"main": "index.js",
 	"scripts": {
