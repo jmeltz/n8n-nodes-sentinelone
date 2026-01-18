@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-sentinelone",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "n8n node for SentinelOne API - Manage agents, threats, device control, and tags",
 	"keywords": [
 		"n8n-community-node-package",

@@ -30,7 +30,11 @@ An n8n community node for interacting with the **SentinelOne API v2.1**. Manage 
 ### Device Control Operations
 | Operation | Description |
 |-----------|-------------|
+| **Create Rule** | Create device control rules scoped to sites, groups, accounts, or global |
+| **Delete Rules** | Delete device control rules by ID |
+| **Get Device Events** | Retrieve device control events (blocked/allowed devices) |
 | **Get Device Rules** | Retrieve device control rules with filtering by interface, device class, action, etc. |
+| **Update Rule** | Update existing device control rules |
 
 ### Tag Operations
 | Operation | Description |
@@ -120,6 +124,15 @@ Apply mitigation actions:
 - **Un-Quarantine** - Release from quarantine
 - **Network Quarantine** - Network isolate the affected endpoint
 
+### Device Control: Create Rule
+
+Create a new device control rule with:
+- **Scope**: Global (Tenant), Account, Site, or Group level
+- **Interface**: USB, Bluetooth, Thunderbolt, eSATA
+- **Rule Type**: Device Class, Vendor ID, Product ID, Device ID, Bluetooth Version
+- **Action**: Allow, Block, Read-Only
+- **Status**: Enabled or Disabled
+
 ### Device Control: Get Device Rules
 
 Retrieve device control rules with filtering:
@@ -128,6 +141,22 @@ Retrieve device control rules with filtering:
 - Actions (Allow, Block, Read-Only)
 - Scopes (Account, Global, Group, Site)
 - Statuses (Enabled, Disabled)
+
+### Device Control: Update Rule
+
+Update an existing device control rule by ID. Modifiable fields:
+- Rule Name, Action, Status, Device Class, Vendor ID, Product ID
+
+### Device Control: Delete Rules
+
+Delete device control rules by providing rule IDs (comma-separated).
+
+### Device Control: Get Device Events
+
+Retrieve device control events with filtering:
+- Event Types (Blocked, Allowed, Read-Only)
+- Interfaces, Agent IDs, Site/Group IDs
+- Date ranges, Computer name, Query search
 
 ### Tag: Get Tags & Manage Tags
 
@@ -190,6 +219,18 @@ Function: Format audit report
 Google Sheets: Append to compliance log
 ```
 
+### Block USB Storage on New Sites
+
+```
+Trigger: Webhook (new site created)
+    |
+SentinelOne: Create Rule (scope: site, interface: USB, deviceClass: Mass Storage, action: Block)
+    |
+SentinelOne: Get Device Events (filter: siteId, eventType: blocked)
+    |
+Slack: Notify IT team of new policy
+```
+
 ## API Reference
 
 This node uses the **SentinelOne API v2.1**. For complete API documentation, visit your SentinelOne console's API documentation at:
@@ -210,6 +251,14 @@ https://your-console.sentinelone.net/api-doc/overview
 - **SentinelOne Docs:** [Developer Portal](https://developer.sentinelone.com/)
 
 ## Changelog
+
+### v0.3.0
+- Expanded Device Control operations:
+  - Create Rule (with site/group/account/global scoping)
+  - Update Rule
+  - Delete Rules
+  - Get Device Events
+- Enhanced rule creation with support for device class, vendor ID, product ID, and Bluetooth version matching
 
 ### v0.2.0
 - Added Threat operations (Get Threats, Mitigate Threat)

@@ -146,10 +146,34 @@ export class SentinelOne implements INodeType {
 				displayOptions: { show: { resource: ['deviceControl'] } },
 				options: [
 					{
+						name: 'Create Rule',
+						value: 'createRule',
+						description: 'Create a new Device Control rule',
+						action: 'Create device control rule',
+					},
+					{
+						name: 'Delete Rules',
+						value: 'deleteRules',
+						description: 'Delete Device Control rules',
+						action: 'Delete device control rules',
+					},
+					{
+						name: 'Get Device Events',
+						value: 'getDeviceEvents',
+						description: 'Get Device Control events',
+						action: 'Get device control events',
+					},
+					{
 						name: 'Get Device Rules',
 						value: 'getDeviceRules',
 						description: 'Get the Device Control rules that match the filter',
 						action: 'Get device control rules',
+					},
+					{
+						name: 'Update Rule',
+						value: 'updateRule',
+						description: 'Update an existing Device Control rule',
+						action: 'Update device control rule',
 					},
 				],
 				default: 'getDeviceRules',
@@ -191,7 +215,7 @@ export class SentinelOne implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['agent', 'threat', 'deviceControl', 'tag'],
-						operation: ['getAgents', 'getThreats', 'getDeviceRules', 'getTags'],
+						operation: ['getAgents', 'getThreats', 'getDeviceRules', 'getDeviceEvents', 'getTags'],
 					},
 				},
 				default: false,
@@ -204,7 +228,7 @@ export class SentinelOne implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['agent', 'threat', 'deviceControl', 'tag'],
-						operation: ['getAgents', 'getThreats', 'getDeviceRules', 'getTags'],
+						operation: ['getAgents', 'getThreats', 'getDeviceRules', 'getDeviceEvents', 'getTags'],
 						returnAll: [false],
 					},
 				},
@@ -546,6 +570,247 @@ export class SentinelOne implements INodeType {
 				],
 			},
 
+			// Create Rule Options
+			{
+				displayName: 'Rule Name',
+				name: 'ruleName',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'] } },
+				default: '',
+				description: 'Name of the device control rule',
+			},
+			{
+				displayName: 'Interface',
+				name: 'interface',
+				type: 'options',
+				required: true,
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'] } },
+				options: [
+					{ name: 'USB', value: 'USB' },
+					{ name: 'Bluetooth', value: 'Bluetooth' },
+					{ name: 'Thunderbolt', value: 'Thunderbolt' },
+					{ name: 'eSATA', value: 'eSATA' },
+				],
+				default: 'USB',
+				description: 'Device interface type',
+			},
+			{
+				displayName: 'Action',
+				name: 'ruleAction',
+				type: 'options',
+				required: true,
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'] } },
+				options: [
+					{ name: 'Allow', value: 'Allow' },
+					{ name: 'Block', value: 'Block' },
+					{ name: 'Read Only', value: 'Read-Only' },
+				],
+				default: 'Block',
+				description: 'Action to apply when device matches',
+			},
+			{
+				displayName: 'Rule Type',
+				name: 'ruleType',
+				type: 'options',
+				required: true,
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'] } },
+				options: [
+					{ name: 'Device Class', value: 'class' },
+					{ name: 'Vendor ID', value: 'vendorId' },
+					{ name: 'Product ID', value: 'productId' },
+					{ name: 'Device ID', value: 'deviceId' },
+					{ name: 'Bluetooth Version', value: 'bluetoothVersion' },
+				],
+				default: 'class',
+				description: 'Type of rule matching',
+			},
+			{
+				displayName: 'Device Class',
+				name: 'deviceClass',
+				type: 'options',
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'], ruleType: ['class'] } },
+				options: [
+					{ name: 'Any', value: 'Any' },
+					{ name: 'Mass Storage', value: 'Mass Storage' },
+					{ name: 'Printer', value: 'Printer' },
+					{ name: 'Portable Device', value: 'Portable Device' },
+					{ name: 'Communication', value: 'Communication' },
+				],
+				default: 'Mass Storage',
+				description: 'Device class to match',
+			},
+			{
+				displayName: 'Vendor ID',
+				name: 'vendorId',
+				type: 'string',
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'], ruleType: ['vendorId', 'productId', 'deviceId'] } },
+				default: '',
+				description: 'USB Vendor ID (hex format, e.g., 0x1234)',
+			},
+			{
+				displayName: 'Product ID',
+				name: 'productId',
+				type: 'string',
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'], ruleType: ['productId', 'deviceId'] } },
+				default: '',
+				description: 'USB Product ID (hex format, e.g., 0x5678)',
+			},
+			{
+				displayName: 'Bluetooth Version',
+				name: 'bluetoothVersion',
+				type: 'options',
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'], ruleType: ['bluetoothVersion'], interface: ['Bluetooth'] } },
+				options: [
+					{ name: 'Version 1', value: '1' },
+					{ name: 'Version 2', value: '2' },
+					{ name: 'Version 3', value: '3' },
+					{ name: 'Version 4', value: '4' },
+					{ name: 'Version 5', value: '5' },
+				],
+				default: '4',
+				description: 'Bluetooth version to match',
+			},
+			{
+				displayName: 'Scope',
+				name: 'ruleScope',
+				type: 'options',
+				required: true,
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'] } },
+				options: [
+					{ name: 'Global (Tenant)', value: 'tenant' },
+					{ name: 'Account', value: 'account' },
+					{ name: 'Site', value: 'site' },
+					{ name: 'Group', value: 'group' },
+				],
+				default: 'site',
+				description: 'Scope level for the rule',
+			},
+			{
+				displayName: 'Account IDs',
+				name: 'createRuleAccountIds',
+				type: 'string',
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'], ruleScope: ['account'] } },
+				default: '',
+				description: 'Account IDs for account-scoped rules (comma-separated)',
+			},
+			{
+				displayName: 'Site IDs',
+				name: 'createRuleSiteIds',
+				type: 'string',
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'], ruleScope: ['site'] } },
+				default: '',
+				description: 'Site IDs for site-scoped rules (comma-separated)',
+			},
+			{
+				displayName: 'Group IDs',
+				name: 'createRuleGroupIds',
+				type: 'string',
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'], ruleScope: ['group'] } },
+				default: '',
+				description: 'Group IDs for group-scoped rules (comma-separated)',
+			},
+			{
+				displayName: 'Status',
+				name: 'ruleStatus',
+				type: 'options',
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['createRule'] } },
+				options: [
+					{ name: 'Enabled', value: 'Enabled' },
+					{ name: 'Disabled', value: 'Disabled' },
+				],
+				default: 'Enabled',
+				description: 'Initial status of the rule',
+			},
+
+			// Update Rule Options
+			{
+				displayName: 'Rule ID',
+				name: 'updateRuleId',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['updateRule'] } },
+				default: '',
+				description: 'ID of the rule to update',
+			},
+			{
+				displayName: 'Update Fields',
+				name: 'updateFields',
+				type: 'collection',
+				placeholder: 'Add Field',
+				default: {},
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['updateRule'] } },
+				options: [
+					{ displayName: 'Rule Name', name: 'ruleName', type: 'string', default: '', description: 'New name for the rule' },
+					{
+						displayName: 'Action', name: 'action', type: 'options', default: 'Block',
+						options: [
+							{ name: 'Allow', value: 'Allow' }, { name: 'Block', value: 'Block' }, { name: 'Read Only', value: 'Read-Only' },
+						],
+					},
+					{
+						displayName: 'Status', name: 'status', type: 'options', default: 'Enabled',
+						options: [{ name: 'Enabled', value: 'Enabled' }, { name: 'Disabled', value: 'Disabled' }],
+					},
+					{
+						displayName: 'Device Class', name: 'deviceClass', type: 'options', default: 'Any',
+						options: [
+							{ name: 'Any', value: 'Any' }, { name: 'Mass Storage', value: 'Mass Storage' },
+							{ name: 'Printer', value: 'Printer' }, { name: 'Portable Device', value: 'Portable Device' },
+							{ name: 'Communication', value: 'Communication' },
+						],
+					},
+					{ displayName: 'Vendor ID', name: 'vendorId', type: 'string', default: '', description: 'USB Vendor ID' },
+					{ displayName: 'Product ID', name: 'productId', type: 'string', default: '', description: 'USB Product ID' },
+				],
+			},
+
+			// Delete Rules Options
+			{
+				displayName: 'Rule IDs',
+				name: 'deleteRuleIds',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['deleteRules'] } },
+				default: '',
+				description: 'IDs of rules to delete (comma-separated)',
+			},
+
+			// Get Device Events Filters
+			{
+				displayName: 'Filters',
+				name: 'deviceEventFilters',
+				type: 'collection',
+				placeholder: 'Add Filter',
+				default: {},
+				displayOptions: { show: { resource: ['deviceControl'], operation: ['getDeviceEvents'] } },
+				options: [
+					{ displayName: 'Account IDs', name: 'accountIds', type: 'string', default: '', description: 'List of Account IDs (comma-separated)' },
+					{ displayName: 'Agent IDs', name: 'agentIds', type: 'string', default: '', description: 'List of Agent IDs (comma-separated)' },
+					{ displayName: 'Computer Name Contains', name: 'computerName__contains', type: 'string', default: '', description: 'Free-text filter by computer name' },
+					{
+						displayName: 'Event Types', name: 'eventTypes', type: 'multiOptions', default: [],
+						options: [
+							{ name: 'Blocked', value: 'blocked' },
+							{ name: 'Allowed', value: 'allowed' },
+							{ name: 'Read Only', value: 'read-only' },
+						],
+					},
+					{ displayName: 'Group IDs', name: 'groupIds', type: 'string', default: '', description: 'List of Group IDs (comma-separated)' },
+					{
+						displayName: 'Interfaces', name: 'interfaces', type: 'multiOptions', default: [],
+						options: [
+							{ name: 'USB', value: 'USB' }, { name: 'Bluetooth', value: 'Bluetooth' },
+							{ name: 'Thunderbolt', value: 'Thunderbolt' }, { name: 'eSATA', value: 'eSATA' },
+						],
+					},
+					{ displayName: 'Query', name: 'query', type: 'string', default: '', description: 'Free-text search term' },
+					{ displayName: 'Rule IDs', name: 'ruleIds', type: 'string', default: '', description: 'Filter by specific rule IDs (comma-separated)' },
+					{ displayName: 'Site IDs', name: 'siteIds', type: 'string', default: '', description: 'List of Site IDs (comma-separated)' },
+					{ displayName: 'Created At Between', name: 'createdAt__between', type: 'string', default: '', description: 'Date range (format: from_timestamp-to_timestamp)' },
+				],
+			},
+
 			// ============================================
 			//         TAG OPTIONS
 			// ============================================
@@ -842,6 +1107,134 @@ export class SentinelOne implements INodeType {
 								json: true,
 							});
 							responseData.data?.forEach(rule => returnData.push({ json: rule }));
+						}
+					}
+
+					if (operation === 'createRule') {
+						const ruleName = this.getNodeParameter('ruleName', i) as string;
+						const interfaceType = this.getNodeParameter('interface', i) as string;
+						const ruleAction = this.getNodeParameter('ruleAction', i) as string;
+						const ruleType = this.getNodeParameter('ruleType', i) as string;
+						const ruleScope = this.getNodeParameter('ruleScope', i) as string;
+						const ruleStatus = this.getNodeParameter('ruleStatus', i) as string;
+
+						const data: IDataObject = {
+							ruleName,
+							interface: interfaceType,
+							action: ruleAction,
+							ruleType,
+							status: ruleStatus,
+						};
+
+						// Add rule type specific fields
+						if (ruleType === 'class') {
+							const deviceClass = this.getNodeParameter('deviceClass', i, 'Any') as string;
+							data.deviceClass = deviceClass;
+						} else if (['vendorId', 'productId', 'deviceId'].includes(ruleType)) {
+							const vendorId = this.getNodeParameter('vendorId', i, '') as string;
+							if (vendorId) data.vendorId = vendorId;
+							if (['productId', 'deviceId'].includes(ruleType)) {
+								const productId = this.getNodeParameter('productId', i, '') as string;
+								if (productId) data.productId = productId;
+							}
+						} else if (ruleType === 'bluetoothVersion') {
+							const bluetoothVersion = this.getNodeParameter('bluetoothVersion', i, '4') as string;
+							data.bluetoothVersion = bluetoothVersion;
+						}
+
+						// Build filter for scope
+						const filter: IDataObject = {};
+						if (ruleScope === 'tenant') {
+							filter.tenant = true;
+						} else if (ruleScope === 'account') {
+							const accountIds = this.getNodeParameter('createRuleAccountIds', i, '') as string;
+							if (accountIds) filter.accountIds = accountIds.split(',').map(id => id.trim());
+						} else if (ruleScope === 'site') {
+							const siteIds = this.getNodeParameter('createRuleSiteIds', i, '') as string;
+							if (siteIds) filter.siteIds = siteIds.split(',').map(id => id.trim());
+						} else if (ruleScope === 'group') {
+							const groupIds = this.getNodeParameter('createRuleGroupIds', i, '') as string;
+							if (groupIds) filter.groupIds = groupIds.split(',').map(id => id.trim());
+						}
+
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'POST' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/device-control`,
+							body: { data, filter },
+							json: true,
+						}) as { data: IDataObject };
+						returnData.push({ json: responseData.data || responseData });
+					}
+
+					if (operation === 'updateRule') {
+						const ruleId = this.getNodeParameter('updateRuleId', i) as string;
+						const updateFields = this.getNodeParameter('updateFields', i) as IDataObject;
+
+						const data: IDataObject = {};
+						Object.entries(updateFields).forEach(([key, value]) => {
+							if (value !== undefined && value !== '') {
+								data[key] = value;
+							}
+						});
+
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'PUT' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/device-control/${ruleId}`,
+							body: { data },
+							json: true,
+						}) as { data: IDataObject };
+						returnData.push({ json: responseData.data || responseData });
+					}
+
+					if (operation === 'deleteRules') {
+						const ruleIds = this.getNodeParameter('deleteRuleIds', i) as string;
+						const ids = ruleIds.split(',').map(id => id.trim());
+
+						const responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+							method: 'DELETE' as IHttpRequestMethods,
+							url: `${baseUrl}/web/api/v2.1/device-control`,
+							body: { filter: { ids } },
+							json: true,
+						}) as { data: IDataObject };
+						returnData.push({ json: responseData.data || responseData });
+					}
+
+					if (operation === 'getDeviceEvents') {
+						const returnAll = this.getNodeParameter('returnAll', i) as boolean;
+						const filters = this.getNodeParameter('deviceEventFilters', i) as IDataObject;
+						const qs: IDataObject = {};
+
+						Object.entries(filters).forEach(([key, value]) => {
+							if (value !== undefined && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+								qs[key] = Array.isArray(value) ? (value as string[]).join(',') : value;
+							}
+						});
+
+						const allData: IDataObject[] = [];
+						let responseData: { data: IDataObject[]; pagination?: { nextCursor?: string } };
+
+						if (returnAll) {
+							qs.limit = 1000;
+							do {
+								responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+									method: 'GET' as IHttpRequestMethods,
+									url: `${baseUrl}/web/api/v2.1/device-control/events`,
+									qs,
+									json: true,
+								});
+								if (responseData.data) allData.push(...responseData.data);
+								if (responseData.pagination?.nextCursor) qs.cursor = responseData.pagination.nextCursor;
+							} while (responseData.pagination?.nextCursor);
+							allData.forEach(event => returnData.push({ json: event }));
+						} else {
+							qs.limit = this.getNodeParameter('limit', i) as number;
+							responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'sentinelOneApi', {
+								method: 'GET' as IHttpRequestMethods,
+								url: `${baseUrl}/web/api/v2.1/device-control/events`,
+								qs,
+								json: true,
+							});
+							responseData.data?.forEach(event => returnData.push({ json: event }));
 						}
 					}
 				}
