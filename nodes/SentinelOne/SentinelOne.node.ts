@@ -4,14 +4,16 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	IHttpRequestMethods,
+	IDataObject,
 	NodeApiError,
+	JsonObject,
 } from 'n8n-workflow';
 
 export class SentinelOne implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'SentinelOne',
 		name: 'sentinelOne',
-		icon: 'file:sentinelone.jpg',
+		icon: 'file:sentinelone.png',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
@@ -380,7 +382,7 @@ export class SentinelOne implements INodeType {
 							uuids?: string;
 						};
 
-						const qs: Record<string, string | number | boolean> = {};
+						const qs: IDataObject = {};
 
 						// Add filters to query string
 						if (filters.accountIds) qs.accountIds = filters.accountIds;
@@ -408,8 +410,8 @@ export class SentinelOne implements INodeType {
 						if (filters.uuid) qs.uuid = filters.uuid;
 						if (filters.uuids) qs.uuids = filters.uuids;
 
-						let responseData: { data: object[]; pagination?: { nextCursor?: string } };
-						const allData: object[] = [];
+						let responseData: { data: IDataObject[]; pagination?: { nextCursor?: string } };
+						const allData: IDataObject[] = [];
 
 						if (returnAll) {
 							qs.limit = 1000;
@@ -465,7 +467,7 @@ export class SentinelOne implements INodeType {
 					returnData.push({ json: { error: (error as Error).message } });
 					continue;
 				}
-				throw new NodeApiError(this.getNode(), error as object);
+				throw new NodeApiError(this.getNode(), error as JsonObject);
 			}
 		}
 
