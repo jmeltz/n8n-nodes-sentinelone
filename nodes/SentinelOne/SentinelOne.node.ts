@@ -11,7 +11,7 @@ export class SentinelOne implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'SentinelOne',
 		name: 'sentinelOne',
-		icon: 'file:sentinelone.svg',
+		icon: 'file:sentinelone.jpg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
