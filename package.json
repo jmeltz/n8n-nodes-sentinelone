@@ -1,0 +1,51 @@
+{
+	"name": "n8n-nodes-sentinelone",
+	"version": "0.1.0",
+	"description": "n8n node for SentinelOne API",
+	"keywords": [
+		"n8n-community-node-package",
+		"sentinelone",
+		"security",
+		"endpoint",
+		"edr"
+	],
+	"license": "MIT",
+	"homepage": "",
+	"author": {
+		"name": ""
+	},
+	"repository": {
+		"type": "git",
+		"url": ""
+	},
+	"main": "index.js",
+	"scripts": {
+		"build": "tsc && gulp build:icons",
+		"dev": "tsc --watch",
+		"format": "prettier nodes credentials --write",
+		"lint": "eslint nodes credentials package.json",
+		"lintfix": "eslint nodes credentials package.json --fix",
+		"prepublishOnly": "npm run build"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"credentials": [
+			"dist/credentials/SentinelOneApi.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/SentinelOne/SentinelOne.node.js"
+		]
+	},
+	"devDependencies": {
+		"@types/node": "^20.10.0",
+		"gulp": "^4.0.2",
+		"n8n-workflow": "^1.20.0",
+		"typescript": "^5.3.0"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	}
+}
