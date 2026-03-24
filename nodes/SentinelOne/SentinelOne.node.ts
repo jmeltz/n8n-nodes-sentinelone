@@ -611,6 +611,23 @@ export class SentinelOne implements INodeType {
 					{ displayName: 'Computer Name Contains', name: 'computerName__contains', type: 'string', default: '', description: 'Free-text filter by computer name' },
 					{ displayName: 'Content Hash', name: 'contentHashes', type: 'string', default: '', description: 'Content hashes (comma-separated)' },
 					{ displayName: 'Created At Between', name: 'createdAt__between', type: 'string', default: '', description: 'Date range (format: from_timestamp-to_timestamp)' },
+					{
+						displayName: 'Created At - Quick Range',
+						name: 'createdAt__quickRange',
+						type: 'options',
+						default: 'none',
+						description: 'Quickly filter threats by creation time. If "Created At (After)" is also set, it takes precedence.',
+						options: [
+							{ name: 'No Filter', value: 'none' },
+							{ name: 'Last 24 Hours', value: 'last24h' },
+							{ name: 'Last 7 Days', value: 'last7d' },
+							{ name: 'Last 14 Days', value: 'last14d' },
+							{ name: 'Last 30 Days', value: 'last30d' },
+							{ name: 'Last 90 Days', value: 'last90d' },
+						],
+					},
+					{ displayName: 'Created At (After)', name: 'createdAt__gte', type: 'dateTime', default: '', description: 'Return threats created at or after this date/time' },
+					{ displayName: 'Created At (Before)', name: 'createdAt__lte', type: 'dateTime', default: '', description: 'Return threats created at or before this date/time' },
 					{ displayName: 'Group IDs', name: 'groupIds', type: 'string', default: '', description: 'List of Group IDs (comma-separated)' },
 					{
 						displayName: 'Incident Statuses', name: 'incidentStatuses', type: 'multiOptions', default: [],
@@ -648,6 +665,8 @@ export class SentinelOne implements INodeType {
 						options: [{ name: 'Ascending', value: 'asc' }, { name: 'Descending', value: 'desc' }],
 					},
 					{ displayName: 'Threat IDs', name: 'ids', type: 'string', default: '', description: 'List of Threat IDs (comma-separated)' },
+					{ displayName: 'Updated At (After)', name: 'updatedAt__gte', type: 'dateTime', default: '', description: 'Return threats updated at or after this date/time' },
+					{ displayName: 'Updated At (Before)', name: 'updatedAt__lte', type: 'dateTime', default: '', description: 'Return threats updated at or before this date/time' },
 				],
 			},
 
@@ -1605,7 +1624,25 @@ export class SentinelOne implements INodeType {
 						const filters = this.getNodeParameter('threatFilters', i) as IDataObject;
 						const qs: IDataObject = {};
 
+						// Handle quick range preset — compute createdAt__gte from the selected preset
+						const quickRange = filters.createdAt__quickRange as string | undefined;
+						if (quickRange && quickRange !== 'none') {
+							const now = new Date();
+							const msPerDay = 24 * 60 * 60 * 1000;
+							const rangeMs: Record<string, number> = {
+								last24h: 1 * msPerDay,
+								last7d: 7 * msPerDay,
+								last14d: 14 * msPerDay,
+								last30d: 30 * msPerDay,
+								last90d: 90 * msPerDay,
+							};
+							if (rangeMs[quickRange]) {
+								qs['createdAt__gte'] = new Date(now.getTime() - rangeMs[quickRange]).toISOString();
+							}
+						}
+
 						Object.entries(filters).forEach(([key, value]) => {
+							if (key === 'createdAt__quickRange') return;
 							if (value !== undefined && value !== '' && !(Array.isArray(value) && value.length === 0)) {
 								qs[key] = Array.isArray(value) ? (value as string[]).join(',') : value;
 							}
